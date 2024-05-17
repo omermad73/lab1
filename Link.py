@@ -1,40 +1,51 @@
-class Link:
-    def __init__(self, host1, host2, tx_rate):
+from GNO import GNO
+
+
+class L2Message(GNO):
+    def __init__(self, host1, host2, tx_rate, propagation,error_rate):
+        super().__init__("Link")
         self.host1 = host1
         self.host2 = host2
         self.tx_rate = tx_rate
-        self.propagation = 0.0
-        self.error_rate = 0.0
-
-    def get_host1(self):
-        return self.host1
-
-    def set_host1(self, host1):
-        self.host1 = host1
-
-    def get_host2(self):
-        return self.host2
-
-    def set_host2(self, host2):
-        self.host2 = host2
-
-    def get_tx_rate(self):
-        return self.tx_rate
-
-    def set_tx_rate(self, tx_rate):
-        self.tx_rate = tx_rate
-
-    def get_propagation(self):
-        return self.propagation
-
-    def set_propagation(self, propagation):
         self.propagation = propagation
-
-    def get_error_rate(self):
-        return self.error_rate
-
-    def set_error_rate(self, error_rate):
         self.error_rate = error_rate
-```
 
-This Python code mirrors the structure and functionality of the provided Java class `Link`.
+    @property
+    def host1(self):
+        return self._host1
+
+    @host1.setter
+    def host1(self, value):
+        self._host1 = value
+
+    @property
+    def host2(self):
+        return self._host2
+
+    @host2.setter
+    def host2(self, value):
+        self._host2 = value
+
+    @property
+    def tx_rate(self):
+        return self._tx_rate
+
+    @tx_rate.setter
+    def tx_rate(self, value):
+        self._tx_rate = value
+
+    @property
+    def propagation(self):
+        return self._propagation
+
+    @propagation.setter
+    def propagation(self, value):
+        self._propagation = value
+
+    @property
+    def error_rate(self):
+        return self._error_rate
+
+    @error_rate.setter
+    def error_rate(self, value):
+        self._error_rate = value
