@@ -1,4 +1,5 @@
 from GNO import GNO
+
 class Event(GNO):
     def __init__(self, scheduled_time, event_type, scheduling_object_id, next_object_id, message_id):
         super().__init__("Event")
