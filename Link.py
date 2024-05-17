@@ -2,7 +2,7 @@ from GNO import GNO
 
 
 class L2Message(GNO):
-    def __init__(self, host1, host2, tx_rate, propagation,error_rate):
+    def __init__(self, host1, host2, tx_rate,propagation=0.0, error_rate=0.0):
         super().__init__("Link")
         self.host1 = host1
         self.host2 = host2
