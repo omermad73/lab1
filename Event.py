@@ -1,8 +1,5 @@
-from GNO import GNO
-
-class Event(GNO):
+class Event:
     def __init__(self, scheduled_time, event_type, scheduling_object_id, next_object_id, message_id):
-        super().__init__("Event")
         self.scheduled_time = scheduled_time
         self.event_type = event_type
         self.scheduling_object_id = scheduling_object_id
