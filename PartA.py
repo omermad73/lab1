@@ -33,6 +33,7 @@ class PartA:
         i = 0
         #  the end is never the end is never the end is never the end is never the end is never the end is never the end
         while time < terminate:
+            event = different_timeline.events[0]
             if event.event_type == "create a message":
                 host = PartA.find_host(all_host, event.scheduling_object_id)
                 if not isinstance(host, Host):
@@ -42,6 +43,12 @@ class PartA:
                 different_timeline.done()  # remove event
                 if not different_timeline.events:  # if there is no more events, the simulation is over
                     time = terminate
+
+            elif event.event_type == "message received":
+                different_timeline.done()  # remove event
+
+            if not different_timeline.events:  # if there is no more events, the simulation is over
+                time = terminate
 
     @staticmethod
     def generate_times(host_id, timeline, number_of_packets=2000, lambda_param=0.5):

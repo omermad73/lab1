@@ -30,8 +30,8 @@ class Host(GNO):
     def sending_l2_messgae(self, timeline, dest_host, l2_message):
         # sending the message
         dest_id = dest_host.id
-        time = 1  # "-1" - idk how calc this shit ------------------------------------- need to be fix ---------------
-        event = Event(time, "Send message", self.id, dest_id, l2_message.id)
+        time = 3  # "-1" - idk how calc this shit ------------------------------------- need to be fix ---------------
+        event = Event(time, "message received", self.id, dest_id, l2_message.id)
         timeline.add_event(event)
 
     def print_statistics(self, printing_flag):
@@ -42,7 +42,9 @@ class Host(GNO):
 
     def get_random_host(self, all_hosts):
         # Get a random index for selecting a destination host
+        all_hosts.remove(self)
         random_index = random.randint(0, len(all_hosts) - 1)
+        all_hosts.append(self)
 
         return all_hosts[random_index]
 
