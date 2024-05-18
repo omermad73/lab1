@@ -1,60 +1,42 @@
-class Event:
-    def __init__(self, scheduled_time, event_type, scheduling_object_id, next_object_id, message_id):
-        self.scheduled_time = scheduled_time
-        self.event_type = event_type
-        self.scheduling_object_id = scheduling_object_id
-        self.next_object_id = next_object_id
-        self.message_id = message_id
+from GNO import GNO
 
-    # Getter and Setter for scheduled_time
-    @property
-    def scheduled_time(self):
-        return self._scheduled_time
 
-    @scheduled_time.setter
-    def scheduled_time(self, value):
-        self._scheduled_time = value
-
-    # Getter and Setter for event_type
-    @property
-    def event_type(self):
-        return self._event_type
-
-    @event_type.setter
-    def event_type(self, value):
-        self._event_type = value
-
-    # Getter and Setter for scheduling_object_id
-    @property
-    def scheduling_object_id(self):
-        return self._scheduling_object_id
-
-    @scheduling_object_id.setter
-    def scheduling_object_id(self, value):
-        self._scheduling_object_id = value
-
-    # Getter and Setter for next_object_id
-    @property
-    def next_object_id(self):
-        return self._next_object_id
-
-    @next_object_id.setter
-    def next_object_id(self, value):
-        self._next_object_id = value
-
-    # Getter and Setter for message_id
-    @property
-    def message_id(self):
-        return self._message_id
-
-    @message_id.setter
-    def message_id(self, value):
-        self._message_id = value
+class L2Message(GNO):
+    def __init__(self, src_mac, dst_mac, message_size, message_type):
+        super().__init__("L2Message")
+        self.src_mac = src_mac
+        self.dst_mac = dst_mac
+        self.message_size = message_size
+        self.message_type = message_type
 
     @property
-    def header_size(self):
-        return self._header_size
+    def src_mac(self):
+        return self._src_mac
+
+    @src_mac.setter
+    def src_mac(self, value):
+        self._src_mac = value
 
     @property
-    def payload_size(self):
-        return self._message_size - self.header_size
+    def dst_mac(self):
+        return self._dst_mac
+
+    @dst_mac.setter
+    def dst_mac(self, value):
+        self._dst_mac = value
+
+    @property
+    def message_size(self):
+        return self._message_size
+
+    @message_size.setter
+    def message_size(self, value):
+        self._message_size = value
+
+    @property
+    def message_type(self):
+        return self._message_type
+
+    @message_type.setter
+    def message_type(self, value):
+        self._message_type = value
