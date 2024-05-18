@@ -8,6 +8,10 @@ class Timeline:
         '''do things'''
         self.remove_head()
 
+    def add_events(self, events):
+        for event in events:
+            self.add_event(event)
+
     def add_event(self, event):
         if not isinstance(event, Event):
             raise ValueError("Only Event instances can be added to the timeline.")
@@ -16,7 +20,10 @@ class Timeline:
     def remove_head(self):
         self.events.remove(0)
 
-    def sort(self):
+    def get_events(self):
+        return self.events
+
+    def sort_events(self):
         self.events.sort(key=lambda event: event.scheduled_time)
 
     def __str__(self):
