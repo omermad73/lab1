@@ -4,10 +4,6 @@ class Timeline:
     def __init__(self):
         self.events = []
 
-    def do_event(self):
-        '''do things'''
-        self.remove_head()
-
     def add_events(self, events):
         for event in events:
             self.add_event(event)
@@ -16,9 +12,10 @@ class Timeline:
         if not isinstance(event, Event):
             raise ValueError("Only Event instances can be added to the timeline.")
         self.events.append(event)
+        self.sort_events()
 
-    def remove_head(self):
-        self.events.remove(0)
+    def done(self):  # finished with an event
+        self.events.remove(self.events[0])
 
     def get_events(self):
         return self.events
