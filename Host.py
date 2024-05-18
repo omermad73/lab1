@@ -4,7 +4,7 @@ from Event import Event
 
 
 
-class L2Message(GNO):
+class Host(GNO):
     def __init__(self, mac, nic, total_tx_bytes, total_rx_bytes):
         super().__init__("Host")
         self.mac = mac
@@ -44,7 +44,9 @@ class L2Message(GNO):
     def total_rx_bytes(self, value):
         self._total_rx_bytes = value
 
-    def create_l2_message(self, l2_message_id, printing_flag, all_hosts, min_payload_size, max_payload_size):
+    def create_l2_message(self):
+
+    def create_l2_message_old(self, l2_message_id, printing_flag, all_hosts, min_payload_size, max_payload_size):
         # New "create a message" event
         event = Event(time.time() - self.time, "create a message", self.host_id, self.host_id, l2_message_id)
 
@@ -60,7 +62,7 @@ class L2Message(GNO):
         if printing_flag:
             print("Host", self.mac, "created an L2 Message (size:", payload_size, "Bytes)")
 
-    def receive_l2_message(self, printing_flag, l2_message):
+        def receive_l2_message(self, printing_flag, l2_message):
         # New "receive a message" event
         event = Event(time.time() - self.time, "receive a message", self.host_id, self.host_id,
                       l2_message.l2_message_id)
