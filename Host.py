@@ -13,7 +13,7 @@ class Host(GNO):
         self.total_tx_bytes = total_tx_bytes
         self.total_rx_bytes = total_rx_bytes
 
-    def create_l2_message(self, timeline, all_hosts, min_payload_size, max_payload_size, printing_flag):
+    def create_l2_message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag):
 
         dest_host = self.get_random_host(all_hosts)
 
@@ -22,17 +22,26 @@ class Host(GNO):
         payload_size = self.get_random_payload_size(min_payload_size, max_payload_size)
 
         l2_message = L2Message(self.mac, dest_mac, payload_size, "data")
+        all_l2messages.append(l2_message)
         self.total_tx_bytes += payload_size
         if printing_flag == 1:  # on
-            print("Host: " + str(l2_message.src_mac) + " created an L2 Message (size: " + str(l2_message.message_size) + ")")
-        self.sending_l2_messgae(timeline, dest_host, l2_message)  # sending the message
+            time =timeline.events[0].scheduled_time
+            print("Host:",l2_message.src_mac, "\033[32mcreated\033[0m an L2 Message (size:", l2_message.message_size, ")", end=' ')
+            print("at time:", f"{time:.6f}")
+        self.sending_l2_message(timeline, dest_host, l2_message)  # sending the message
 
-    def sending_l2_messgae(self, timeline, dest_host, l2_message):
+    def sending_l2_message(self, timeline, dest_host, l2_message):
         # sending the message
         dest_id = dest_host.id
-        time = 3  # "-1" - idk how calc this shit ------------------------------------- need to be fix ---------------
+        time = timeline.events[0].scheduled_time2 + 3  # "-1" - idk how calc this shit ------------------------------------- need to be fix ---------------
         event = Event(time, "message received", self.id, dest_id, l2_message.id)
         timeline.add_event(event)
+
+    def receiving_l2_message(self, l2_message,time, printing_flag):
+        # sending the message
+        self.total_tx_bytes += l2_message.message_size
+        if printing_flag == 1:  # onf"\033[32m{text}\033[0m"
+            print("Host:", self.mac, "\033[31mdestroyed\033[0m an L2 Message (size: ", str(l2_message.message_size), ")", "at time:", f"{time:.6f}")
 
     def print_statistics(self, printing_flag):
         # Print the total bytes sent and received if printing flag is ON
