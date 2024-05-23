@@ -3,6 +3,7 @@ from Event import Event
 from Link import Link
 from Host import Host
 from Timeline import Timeline
+from Link import Link
 
 
 class PartA:
@@ -22,7 +23,7 @@ class PartA:
         different_timeline = Timeline()
         host1 = Host("00:00:00:00:00:01")
         host2 = Host("00:00:00:00:00:02")
-        mylink = Link(host1, host2, 3)  # change the nic on the host too
+        my_link = Link(host1, host2, 3)  # change the nic on the host too
 
         all_host = [host1, host2]
         all_l2messages = []
@@ -32,13 +33,13 @@ class PartA:
         event = different_timeline.events[0]
 
         #  the end is never the end is never the end is never the end is never the end is never the end is never the end
-        while time < terminate:
+        while different_timeline.events[0].scheduled_time < terminate:
             event = different_timeline.events[0]
             if event.event_type == "create a message":
                 host = PartA.find_host(all_host, event.scheduling_object_id)
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.create_l2_message(different_timeline, all_host, all_l2messages, min_payload_size, max_payload_size, printing_flag)  # adding new event
+                host.create_l2_message(different_timeline, all_host, all_l2messages, min_payload_size, max_payload_size, printing_flag, my_link)  # adding new event
                 time = event.scheduled_time
                 different_timeline.done()  # remove event
 
