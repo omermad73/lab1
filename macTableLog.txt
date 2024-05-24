@@ -1,0 +1,117 @@
+Table of switch 0 (update 1):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 2):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.920026565304193 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 3):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.75607197592727 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.836045410623077 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 4):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.55660870264637 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.720563292023293 | Status: Valid
+Table of switch 0 (update 5):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.294013886224604 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.457968475601527 | Status: Valid
+Table of switch 0 (update 6):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.024491860758214 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.188446450135137 | Status: Valid
+Table of switch 0 (update 7):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.705649432590391 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 8.730141293348606 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 8):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 7.10073036650782 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 8.370589073159215 | Status: Valid
+Table of switch 0 (update 9):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.747232006039782 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 6.847962372547602 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 10):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.402811136678123 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 6.503541503185943 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 11):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.082391982817603 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 6.183122349325423 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 12):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.592544564723797 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.510152581906194 | Status: Valid
+Table of switch 0 (update 13):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.580239752821235 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.987695188097439 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 14):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.793041925811881 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.805346737714443 | Status: Valid
+Table of switch 0 (update 15):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.773463906036362 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 8.578810643750804 | Status: Valid
+Table of switch 0 (update 16):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.511727314277241 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.73826340824088 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 17):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.385206010845746 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.873478696568505 | Status: Valid
+Table of switch 0 (update 18):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 8.91706154318312 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 8.790540239751625 | Status: Valid
+Table of switch 0 (update 19):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 8.49315778967615 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 8.366636486244655 | Status: Valid
+Table of switch 0 (update 20):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.062247783272749 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 7.428884269517404 | Status: Valid
+Table of switch 0 (update 21):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.719274791083919 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 7.085911277328574 | Status: Valid
+Table of switch 0 (update 22):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 6.997455524050579 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 8.27818073296666 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 23):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 6.4582696213800155 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.460814097329436 | Status: Valid
+Table of switch 0 (update 24):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 5.902643743368252 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 9.444374121988236 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 25):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 8.647261543398127 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.20288742140989 | Status: Valid
+Table of switch 0 (update 26):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.32770999192267 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 7.9749715353207975 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 10.0 | Status: Valid
+Table of switch 0 (update 27):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 7.534665215151843 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.559693679831046 | Status: Valid
+Table of switch 0 (update 28):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 9.791402313484014 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 9.35109599331506 | Status: Valid
+Table of switch 0 (update 29):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 8.625193020704401 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 8.184886700535447 | Status: Valid
+Table of switch 0 (update 30):
+MAC: 00:00:00:00:00:02 | Port: 1 | TTL: 6.551113162746496 | Status: Valid
+MAC: 00:00:00:00:00:01 | Port: 0 | TTL: 10.0 | Status: Valid
+MAC: 00:00:00:00:00:03 | Port: 2 | TTL: 6.110806842577542 | Status: Valid
