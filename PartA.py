@@ -1,89 +1,72 @@
 import numpy as np
 from Event import Event
-from Link import Link
 from Host import Host
 from Timeline import Timeline
+from Link import Link
+from SimulationFunctions import SimulationFunctions
+from Switch import Switch
 
 
 class PartA:
     @staticmethod
     def main():
-        print("hello world")
-        # settings
+        # simulation settings
         number_of_packets = 20
         lambda_param = 0.5
         min_payload_size = 10
         max_payload_size = 20
         printing_flag = 1
-        terminate = 20  # [sec].  after this time the simulation is eliminated
-        time = 0
+        terminate = 30  # [sec] after this time the simulation is eliminated
+        file_name = "macTableLog.txt"
+        mac_table_log_file = open(file_name, 'w')
 
-        # start simulation
+        # topology configuration
         different_timeline = Timeline()
         host1 = Host("00:00:00:00:00:01")
         host2 = Host("00:00:00:00:00:02")
-        mylink = Link(host1, host2, 3)  # change the nic on the host too
+        link1 = Link(host1, host2, 3)  # changes the nic on the host too
 
         all_host = [host1, host2]
+        links = [link1]
+        all_switches = []
+        all_components = all_host + all_switches
+
         all_l2messages = []
+        should_terminate = False
 
-        PartA.generate_times(host1.id, different_timeline, number_of_packets, lambda_param)
-        PartA.generate_times(host2.id, different_timeline, number_of_packets, lambda_param)
-        event = different_timeline.events[0]
+        host_link_map = {}  # Create host-link map
+        for link in links:
+            host_link_map[link.host1] = link
+            host_link_map[link.host2] = link
 
-        #  the end is never the end is never the end is never the end is never the end is never the end is never the end
-        while time < terminate:
+        # start simulation
+        for host in all_host:
+            SimulationFunctions.generate_times(host.id, different_timeline, number_of_packets, lambda_param)
+
+        #  main loop
+        while not should_terminate and different_timeline.events[0].scheduled_time < terminate:
             event = different_timeline.events[0]
             if event.event_type == "create a message":
-                host = PartA.find_host(all_host, event.scheduling_object_id)
+                host = SimulationFunctions.find_host(all_host, event.scheduling_object_id)
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.create_l2_message(different_timeline, all_host, all_l2messages, min_payload_size, max_payload_size, printing_flag)  # adding new event
-                time = event.scheduled_time
+                host.create_message(different_timeline, all_host, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":
-                host = PartA.find_host(all_host, event.next_object_id)
-                l2_message = PartA.find_l2message(all_l2messages, event.message_id)
-                if not isinstance(host, Host):
-                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.receiving_l2_message(l2_message, event.scheduled_time, printing_flag)  # adding new event
+                receiver = SimulationFunctions.find_object(all_components, event.next_object_id)
+                l2_message = SimulationFunctions.find_l2message(all_l2messages, event.message_id)
+                if not isinstance(receiver, Host) and not isinstance(receiver, Switch):
+                    raise ValueError("there is event without real host or switch (How the hell you succeed to do it?) ")
+                receiver.handle_message(l2_message, all_l2messages, different_timeline, event.scheduled_time, event.link_id, printing_flag)
                 all_l2messages.remove(l2_message)  # remove the l2message
                 different_timeline.done()  # remove event
 
             if not different_timeline.events:  # if there is no more events, the simulation is over
-                time = terminate
+                should_terminate = True
+                print("Simulation ended successfully")
 
-    @staticmethod
-    def generate_times(host_id, timeline, number_of_packets=2000, lambda_param=0.5):
-        # generate the times between the L2 Messages
-        # number_of_packets - Set the number of packets
-        # lambda_param - Set the Input rate parameter for the exponential distributions
-        # Generate realizations
-
-        inter_arrival_times = np.random.exponential(scale=1 / lambda_param, size=number_of_packets)  # step 1
-
-        # Calculate the input timeline
-        arrival_times = np.cumsum(inter_arrival_times)  # step 2
-        for time in arrival_times:  # step 3
-            event = Event(time, "create a message", host_id)
-            timeline.add_event(event)
-
-    @staticmethod
-    def find_host(all_host, id):
-        for host in all_host:
-            if host.id == id:
-                return host
-        print("there is not such host")
-        return None  # null
-
-    @staticmethod
-    def find_l2message(all_l2message, id):
-        for l2message in all_l2message:
-            if l2message.id == id:
-                return l2message
-        print("there is not such host")
-        return None  # null
+        mac_table_log_file.close()
 
 
 # Run the main function when the script is executed
