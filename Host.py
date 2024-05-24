@@ -13,7 +13,7 @@ class Host(GNO):
         self.total_tx_bytes = total_tx_bytes
         self.total_rx_bytes = total_rx_bytes
 
-    def create_l2_message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag):
+    def create_l2_message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, link):
 
         dest_host = self.get_random_host(all_hosts)
 
@@ -25,21 +25,21 @@ class Host(GNO):
         all_l2messages.append(l2_message)
         self.total_tx_bytes += payload_size
         if printing_flag == 1:  # on
-            time =timeline.events[0].scheduled_time
+            time = timeline.events[0].scheduled_time
             print("Host:",l2_message.src_mac, "\033[32mcreated\033[0m an L2 Message (size:", l2_message.message_size, ")", end=' ')
             print("at time:", f"{time:.6f}")
-        self.sending_l2_message(timeline, dest_host, l2_message)  # sending the message
+        self.sending_l2_message(timeline, dest_host, l2_message, link)  # sending the message
 
-    def sending_l2_message(self, timeline, dest_host, l2_message):
+    def sending_l2_message(self, timeline, dest_host, l2_message, link):
         # sending the message
         dest_id = dest_host.id
-        time = timeline.events[0].scheduled_time2 + 3  # "-1" - idk how calc this shit ------------------------------------- need to be fix ---------------
+        time = timeline.events[0].scheduled_time + link.total_delay(l2_message)  #calculation of arrival time = time of sending + propagation delay
         event = Event(time, "message received", self.id, dest_id, l2_message.id)
         timeline.add_event(event)
 
     def receiving_l2_message(self, l2_message,time, printing_flag):
         # sending the message
-        self.total_tx_bytes += l2_message.message_size
+        self.total_tx_bytes += l2_message.message_payload
         if printing_flag == 1:  # onf"\033[32m{text}\033[0m"
             print("Host:", self.mac, "\033[31mdestroyed\033[0m an L2 Message (size: ", str(l2_message.message_size), ")", "at time:", f"{time:.6f}")
 
@@ -54,11 +54,9 @@ class Host(GNO):
         all_hosts.remove(self)
         random_index = random.randint(0, len(all_hosts) - 1)
         all_hosts.append(self)
-
         return all_hosts[random_index]
 
     def get_random_payload_size(self, min_payload_size, max_payload_size):
         # Generate a random payload size between the min and max payload size
         payload_size = random.randint(min_payload_size, max_payload_size)
-
         return payload_size
