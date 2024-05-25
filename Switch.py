@@ -1,8 +1,6 @@
 import copy
-
 from GNO import GNO
 from Event import Event
-from L2Message import L2Message
 
 
 class Switch(GNO):
@@ -21,16 +19,16 @@ class Switch(GNO):
 
     def update_mac_table(self, mac, port, current_time, printing_flag):
         # Look for an existing entry to update or an empty/expired slot
-        # TODO: if there are no unused or expired cells, the MAC should be placed in the table? if yes, where? (lowest TTL?)
-        # TODO: if a cell is expired, should it be deleted from the table? if yes when? (immediately)
+        # If there are no unused or expired rows, the MAC will be placed in the lowest TTL row
+        # If a row is expired It will not be deleted from the table, rather be replaced in the future
         for entry in self.mac_table:
-            if entry['used'] and entry['mac'] == mac: #entey exist -> updating 
+            if entry['used'] and entry['mac'] == mac:
                 entry['port'] = port
                 entry['time'] = current_time
                 if printing_flag == 1:
                     self.print_mac_table(current_time)
                 return
-
+        min_time = 100
         for entry in self.mac_table:  # If no existing entry is found, look for an empty slot
             if not entry['used'] or current_time - entry['time'] >= self.ttl:
                 entry['used'] = True
@@ -40,6 +38,16 @@ class Switch(GNO):
                 if printing_flag == 1:
                     self.print_mac_table(current_time)
                 return
+            if min_time > entry['time']:
+                min_time = entry['time']
+                oldest_entry = entry
+
+        oldest_entry['used'] = True
+        oldest_entry['mac'] = mac
+        oldest_entry['port'] = port
+        oldest_entry['time'] = current_time
+        if printing_flag == 1:
+            self.print_mac_table(current_time)
 
     def find_port(self, mac, current_time):
         for entry in self.mac_table:
@@ -47,9 +55,9 @@ class Switch(GNO):
                 return entry['port']
         return None
 
-    def link_to_port(self, link_id):  # Find the port number of the corresponding link
+    def link_to_port(self, id):  # Find the port number of the corresponding link
         for port, link in enumerate(self.ports):
-            if link.id == link_id:
+            if link.id == id:
                 return port
         return None
 
@@ -60,26 +68,24 @@ class Switch(GNO):
 
         if printing_flag == 1:
             print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port {port} at time: {current_time:.6f}, MAC table updated")
+            print(f"Source MAC: {src_mac} Destination MAC: {dst_mac}")
         self.update_mac_table(src_mac, port, current_time, printing_flag)
-
 
         dest_port = self.find_port(dst_mac, current_time)
         if dest_port is not None:  # If the destination port is found in the MAC table
             if self.ports[dest_port] is not None:  # If the destination port is connected
-                self.send_message(timeline, dest_port, l2_message, all_l2messages)
-                if printing_flag == 1:
-                    print(f"Switch: {self.id} \033[36msending\033[0m the message (size: {l2_message.message_size}) to port {dest_port} at time: {current_time:.6f}")
-            else:
-                self.flood_message(timeline, port, l2_message, all_l2messages)
+                if port != dest_port:  # if not the switch should drop the message
+                    self.send_message(timeline, dest_port, l2_message, all_l2messages)
+                    if printing_flag == 1:
+                        print(f"Switch: {self.id} \033[36msending\033[0m the message (size: {l2_message.message_size}) to port {dest_port} at time: {current_time:.6f}")
+            else:  # that if the link was disconnected
+                pass
         else:
             self.flood_message(timeline, port, l2_message, all_l2messages)  # If the destination port is not found, flood the message
             if printing_flag == 1:
                 print(f"Switch: {self.id} \033[35mflooding\033[0m the message (size: {l2_message.message_size}) at time: {current_time:.6f}")
 
     def flood_message(self, timeline, incoming_port, l2_message, all_l2messages):
-        # TODO: messages should be flood only to ports with connected network? recall that:
-        # "How does a Switch know which port is connected to some network component and which is not?"
-        # "This is crucial when handling flooding"
         for port, link in enumerate(self.ports):
             if port != incoming_port and link is not None:
                 duplicated_message = copy.copy(l2_message)
@@ -97,7 +103,6 @@ class Switch(GNO):
         all_l2messages.append(l2_message)
         timeline.add_event(event)
 
-
     def connect_port(self, port, link):
         if port < 0 or port >= self.num_ports:
             raise ValueError("Invalid port number.")
@@ -112,6 +117,8 @@ class Switch(GNO):
 
     def print_mac_table(self, current_time):
         log_file = self.log_file
+        if log_file == -1:
+            return
         if log_file:
             log_file.write(f"Table of switch {self.id} (update {self.update_counter}):\n")
             for entry in self.mac_table:
@@ -126,4 +133,3 @@ class Switch(GNO):
                     valid = "Valid" if entry['used'] and (current_time - entry['time'] < self.ttl) else "Expired"
                     print(f"MAC: {entry['mac']} | Port: {entry['port']} | TTL: {self.ttl - (current_time - entry['time'])} | Status: {valid}")
         self.update_counter += 1
-
