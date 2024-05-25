@@ -1,4 +1,6 @@
 from GNO import GNO
+from L2Message import L2Message
+from Host import Host
 
 
 class Link(GNO):

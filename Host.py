@@ -14,6 +14,7 @@ class Host(GNO):
         self.total_rx_bytes = total_rx_bytes
 
     def create_message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, link):
+
         dest_host = self.get_random_host(all_hosts)
 
         # Create an L2 Message

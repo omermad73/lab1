@@ -1,6 +1,8 @@
 import copy
+
 from GNO import GNO
 from Event import Event
+from L2Message import L2Message
 
 
 class Switch(GNO):
@@ -22,12 +24,13 @@ class Switch(GNO):
         # TODO: if there are no unused or expired cells, the MAC should be placed in the table? if yes, where? (lowest TTL?)
         # TODO: if a cell is expired, should it be deleted from the table? if yes when? (immediately)
         for entry in self.mac_table:
-            if entry['used'] and entry['mac'] == mac:
+            if entry['used'] and entry['mac'] == mac: #entey exist -> updating 
                 entry['port'] = port
                 entry['time'] = current_time
                 if printing_flag == 1:
                     self.print_mac_table(current_time)
                 return
+
         for entry in self.mac_table:  # If no existing entry is found, look for an empty slot
             if not entry['used'] or current_time - entry['time'] >= self.ttl:
                 entry['used'] = True
@@ -58,6 +61,7 @@ class Switch(GNO):
         if printing_flag == 1:
             print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port {port} at time: {current_time:.6f}, MAC table updated")
         self.update_mac_table(src_mac, port, current_time, printing_flag)
+
 
         dest_port = self.find_port(dst_mac, current_time)
         if dest_port is not None:  # If the destination port is found in the MAC table
@@ -93,6 +97,7 @@ class Switch(GNO):
         all_l2messages.append(l2_message)
         timeline.add_event(event)
 
+
     def connect_port(self, port, link):
         if port < 0 or port >= self.num_ports:
             raise ValueError("Invalid port number.")
@@ -121,3 +126,4 @@ class Switch(GNO):
                     valid = "Valid" if entry['used'] and (current_time - entry['time'] < self.ttl) else "Expired"
                     print(f"MAC: {entry['mac']} | Port: {entry['port']} | TTL: {self.ttl - (current_time - entry['time'])} | Status: {valid}")
         self.update_counter += 1
+
