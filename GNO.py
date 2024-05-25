@@ -4,4 +4,4 @@ class GNO: #Generic Networking Object
     def __init__(self, type):
         self.id = GNO.Count_Objects
         self.type = type
-        GNO.Count_Objects +=1
+        GNO.Count_Objects += 1
