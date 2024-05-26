@@ -7,7 +7,6 @@ from SimulationFunctions import SimulationFunctions
 from Switch import Switch
 
 
-
 class PartA:
     @staticmethod
     def main():
@@ -26,7 +25,6 @@ class PartA:
         host1 = Host("00:00:00:00:00:01")
         host2 = Host("00:00:00:00:00:02")
         link1 = Link(host1, host2, 3)  # changes the nic on the host too
-
 
         all_host = [host1, host2]
         links = [link1]
@@ -53,7 +51,6 @@ class PartA:
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
                 host.create_message(different_timeline, all_host, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
-
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":

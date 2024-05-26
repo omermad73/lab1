@@ -11,12 +11,12 @@ class PartB2:
     @staticmethod
     def main():
         # simulation settings
-        number_of_packets = 10
+        number_of_packets = 20
         lambda_param = 0.5
         min_payload_size = 10
         max_payload_size = 20
         printing_flag = 1
-        terminate = 40  # [sec] after this time the simulation is eliminated
+        terminate = 100  # [sec] after this time the simulation is eliminated
         file_name = "macTableLog.txt"
         mac_table_log_file = open(file_name, 'w')
         mac_table_log_file = None

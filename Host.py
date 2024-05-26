@@ -14,9 +14,7 @@ class Host(GNO):
         self.total_rx_bytes = total_rx_bytes
 
     def create_message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, link):
-
         dest_host = self.get_random_host(all_hosts)
-
         # Create an L2 Message
         dest_mac = dest_host.mac
         payload_size = self.get_random_payload_size(min_payload_size, max_payload_size)
@@ -42,11 +40,13 @@ class Host(GNO):
         timeline.add_event(event)
 
     def handle_message(self, l2_message, all_l2messages, timeline, current_time, port, printing_flag):
+        if self.mac == l2_message.src_mac:
+            raise ValueError(f"host {self.mac} received a message (size: {l2_message.message_size}) from itself")
         if l2_message.dst_mac == self.mac:
             self.total_rx_bytes += l2_message.message_payload
             if printing_flag == 1:
                 print("Host:", self.mac, "\033[31mreceived\033[0m an L2 Message (size: ", str(l2_message.message_size),
-                      ")", f"from {l2_message.dst_mac} at time:", f"{current_time:.6f}")
+                      ")", f"from {l2_message.src_mac} at time:", f"{current_time:.6f}")
         else:
             # If the destination MAC address is not the same as the host MAC address, the message is dropped
             if printing_flag == 1:
@@ -64,8 +64,9 @@ class Host(GNO):
         # Get a random index for selecting a destination host
         all_hosts.remove(self)
         random_index = random.randint(0, len(all_hosts) - 1)
+        random_host = all_hosts[random_index]
         all_hosts.append(self)
-        return all_hosts[random_index]
+        return random_host
 
     def get_random_payload_size(self, min_payload_size, max_payload_size):
         # Generate a random payload size between the min and max payload size
