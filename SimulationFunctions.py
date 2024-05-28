@@ -1,4 +1,6 @@
 import numpy as np
+import networkx as nx
+import matplotlib.pyplot as plt
 from Host import Host
 from Event import Event
 
@@ -55,3 +57,38 @@ class SimulationFunctions:
             host = Host(mac_address)
             hosts.append(host)
         return hosts
+
+    @staticmethod
+    def draw_topology(switches, hosts, links):
+        G = nx.Graph()
+
+        # Add nodes with attributes
+        for switch in switches:
+            G.add_node(switch.id, type='switch')
+        for host in hosts:
+            G.add_node(host.id, type='host')
+
+        # Add edges
+        for link in links:
+            G.add_edge(link.host1.id, link.host2.id)
+
+        # Extract positions for the nodes
+        pos = nx.spring_layout(G)
+
+        # Draw the nodes
+        node_colors = []
+        for node in G.nodes(data=True):
+            if node[1]['type'] == 'switch':
+                node_colors.append('lightblue')
+            else:
+                node_colors.append('gray')
+
+        nx.draw(G, pos, with_labels=True, node_size=3000, node_color=node_colors, font_size=12, font_weight='bold')
+        # Add legend
+        plt.text(0.02, 0.98, "Switch", horizontalalignment='left', verticalalignment='top',
+                 transform=plt.gca().transAxes, bbox=dict(facecolor='lightblue', alpha=0.5))
+        plt.text(0.02, 0.92, "Host", horizontalalignment='left', verticalalignment='top',
+                 transform=plt.gca().transAxes, bbox=dict(facecolor='gray', alpha=0.5))
+
+        # Display the graph
+        plt.show()

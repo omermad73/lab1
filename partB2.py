@@ -97,6 +97,9 @@ class PartB2:
         if mac_table_log_file is not None:
             mac_table_log_file.close()
 
+        # Visualization
+        SimulationFunctions.draw_topology(switches, hosts, links)
+
 
 # Run the main function when the script is executed
 if __name__ == "__main__":

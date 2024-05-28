@@ -1,4 +1,5 @@
 import numpy as np
+
 from Event import Event
 from Host import Host
 from Timeline import Timeline
@@ -26,10 +27,10 @@ class PartA:
         host2 = Host("00:00:00:00:00:02")
         link1 = Link(host1, host2, 3)  # changes the nic on the host too
 
-        all_host = [host1, host2]
+        hosts = [host1, host2]
         links = [link1]
-        all_switches = []
-        all_components = all_host + all_switches
+        switches = []
+        all_components = hosts + switches
 
         all_l2messages = []
         should_terminate = False
@@ -40,17 +41,17 @@ class PartA:
             host_link_map[link.host2] = link
 
         # start simulation
-        for host in all_host:
+        for host in hosts:
             SimulationFunctions.generate_times(host.id, different_timeline, number_of_packets, lambda_param)
 
         #  main loop
         while not should_terminate and different_timeline.events[0].scheduled_time < terminate:
             event = different_timeline.events[0]
             if event.event_type == "create a message":
-                host = SimulationFunctions.find_host(all_host, event.scheduling_object_id)
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.create_message(different_timeline, all_host, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
+                host.create_message(different_timeline, hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":
@@ -68,6 +69,8 @@ class PartA:
 
         mac_table_log_file.close()
 
+        # Visualization
+        SimulationFunctions.draw_topology(switches, hosts, links)
 
 # Run the main function when the script is executed
 if __name__ == "__main__":
