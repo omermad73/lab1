@@ -30,6 +30,14 @@ class SimulationFunctions:
         return None
 
     @staticmethod
+    def find_link(links, id):
+        for link in links:
+            if link.id == id:
+                return link
+        print("there is not such link")
+        return None
+
+    @staticmethod
     def find_object(all_components, id):
         for component in all_components:
             if component.id == id:

@@ -14,18 +14,18 @@ class PartA:
         # simulation settings
         number_of_packets = 20
         lambda_param = 0.5
-        min_payload_size = 10
-        max_payload_size = 20
+        min_payload_size = 6
+        max_payload_size = 6
         printing_flag = 1
-        terminate = 30  # [sec] after this time the simulation is eliminated
+        terminate = 11  # [sec] after this time the simulation is eliminated
         file_name = "macTableLog.txt"
         mac_table_log_file = open(file_name, 'w')
-
+S
         # topology configuration
         different_timeline = Timeline()
         host1 = Host("00:00:00:00:00:01")
         host2 = Host("00:00:00:00:00:02")
-        link1 = Link(host1, host2, 3)  # changes the nic on the host too
+        link1 = Link(host1, host2, 10)  # changes the nic on the host too
 
         hosts = [host1, host2]
         links = [link1]
@@ -52,6 +52,22 @@ class PartA:
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
                 host.create_message(different_timeline, hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
+                different_timeline.done()  # remove event
+
+            elif event.event_type == "sending a message":
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
+                link = SimulationFunctions.find_link(links, host.nic)
+                if not isinstance(host, Host):
+                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
+                host.send_message(different_timeline,link,printing_flag)  # sending the list
+                different_timeline.done()  # remove event
+
+            elif event.event_type == "transmitted":
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
+                link = SimulationFunctions.find_link(links, host.nic)
+                if not isinstance(host, Host):
+                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
+                host.message_tranmitted(different_timeline, link, printing_flag)  # sending the list
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":

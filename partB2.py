@@ -81,6 +81,22 @@ class PartB2:
                 host.create_message(different_timeline, hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
                 different_timeline.done()  # remove event
 
+            elif event.event_type == "sending a message":
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
+                link = SimulationFunctions.find_link(links, host.nic)
+                if not isinstance(host, Host):
+                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
+                host.send_message(different_timeline,link,printing_flag)  # sending the list
+                different_timeline.done()  # remove event
+
+            elif event.event_type == "transmitted":
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
+                link = SimulationFunctions.find_link(links, host.nic)
+                if not isinstance(host, Host):
+                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
+                host.message_tranmitted(different_timeline, link, printing_flag)  # sending the list
+                different_timeline.done()  # remove event
+
             elif event.event_type == "message received":
                 receiver = SimulationFunctions.find_object(all_components, event.next_object_id)
                 l2_message = SimulationFunctions.find_l2message(all_l2messages, event.message_id)
