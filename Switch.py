@@ -25,8 +25,6 @@ class Switch(GNO):
             if entry['used'] and entry['mac'] == mac:
                 entry['port'] = port
                 entry['time'] = current_time
-                if printing_flag == 1:
-                    self.print_mac_table(current_time)
                 return
         min_time = 100
         for entry in self.mac_table:  # If no existing entry is found, look for an empty slot
