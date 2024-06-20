@@ -1,3 +1,4 @@
+import queue
 from Switch import Switch
 
 
@@ -11,11 +12,21 @@ class SwitchLab2(Switch):
         self.totalHoLTime = 0
 
     def configure_queues(self):
-        if self.q_type == 'input':
-            return [[] for _ in range(self.num_ports)]
-        elif self.q_type == 'output':
-            return [[] for _ in range(self.num_ports)]
+        if self.q_type == 'input' or self.q_type == 'output':
+            return [queue.Queue() for _ in range(self.num_ports)]
         elif self.q_type == 'virtual_output':
-            return [[[] for _ in range(self.num_ports)] for _ in range(self.num_ports)]
+            return [[queue.Queue() for _ in range(self.num_ports)] for _ in range(self.num_ports)]
+        else:
+            raise ValueError("Invalid queue type")
+
+    def get_real_port(self, port):
+        return port
 
     def enqueue(self, packet, port):
+        if self.q_type == 'input' or self.q_type == 'output':
+            self.queues[port].put(packet)
+        elif self.q_type == 'virtual_output':
+            for i in range(self.num_ports):
+                self.queues[port][i].put(packet)
+        else:
+            raise ValueError("Invalid queue type")
