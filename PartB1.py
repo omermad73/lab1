@@ -33,7 +33,7 @@ class PartB1:
         links = []
         switch0_links = []
         for host in hosts:
-            link = Link(host, switch0, 3)
+            link = Link(host, switch0, 1000)
             links.append(link)
             switch0_links.append(link)
 
@@ -69,21 +69,6 @@ class PartB1:
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
                 host.create_message(different_timeline, hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
-                different_timeline.done()  # remove event
-            elif event.event_type == "sending a message":
-                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
-                link = SimulationFunctions.find_link(links, host.nic)
-                if not isinstance(host, Host):
-                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.send_message(different_timeline,link,printing_flag)  # sending the list
-                different_timeline.done()  # remove event
-
-            elif event.event_type == "transmitted":
-                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
-                link = SimulationFunctions.find_link(links, host.nic)
-                if not isinstance(host, Host):
-                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.message_tranmitted(different_timeline, link, printing_flag)  # sending the list
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":
