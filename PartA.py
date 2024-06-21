@@ -1,11 +1,10 @@
-import numpy as np
+import random
 from Event import Event
 from Host import Host
 from Timeline import Timeline
 from Link import Link
 from SimulationFunctions import SimulationFunctions
 from Switch import Switch
-
 
 class PartA:
     @staticmethod
@@ -16,30 +15,52 @@ class PartA:
         min_payload_size = 10
         max_payload_size = 20
         printing_flag = 1
-        terminate = 30  # [sec] after this time the simulation is eliminated
+        terminate = 100  # [sec] after this time the simulation is eliminated
         file_name = "macTableLog.txt"
         mac_table_log_file = open(file_name, 'w')
+        mac_table_log_file = None
 
         # topology configuration
         different_timeline = Timeline()
-        host1 = Host("00:00:00:00:00:01")
-        host2 = Host("00:00:00:00:00:02")
-        link1 = Link(host1, host2, 300)  # changes the nic on the host too
+        num_source_hosts = random.randint(3, 7)
+        num_dest_hosts = 2
+        port_num_s0 = 8
+        # Creating switches
+        switch = Switch(port_num_s0, 10, mac_table_log_file)
+        #switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
+        # Creating hosts
+        source_hosts = SimulationFunctions.create_hosts(0, num_source_hosts)
+        dest_hosts = SimulationFunctions.create_hosts(num_source_hosts, num_dest_hosts)
+        hosts = source_hosts + dest_hosts
+        # Creating links
+        links = []
+        switch_links = []
+        for host in source_hosts:
+            link = Link(host, switch, 3)
+            links.append(link)
+            switch_links.append(link)
+        for host in dest_hosts:
+            link = Link(host, switch, 3)
+            links.append(link)
+            switch_links.append(link)
 
-        hosts = [host1, host2]
-        links = [link1]
-        switches = []
+        switch.connect_all_ports(switch_links)
+        switches = [switch]
         all_components = hosts + switches
 
+        #print(f"number of hosts connected to switch0: {source_hosts}")
+        #print(f"number of hosts connected to switch1: {dest_hosts}")
+
+        # start simulation
         all_l2messages = []
         should_terminate = False
 
         host_link_map = {}  # Create host-link map
         for link in links:
+            print(link.host1)
             host_link_map[link.host1] = link
             host_link_map[link.host2] = link
 
-        # start simulation
         for host in hosts:
             SimulationFunctions.generate_times(host.id, different_timeline, number_of_packets, lambda_param)
 
@@ -50,7 +71,24 @@ class PartA:
                 host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
                 if not isinstance(host, Host):
                     raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
-                host.create_message(different_timeline, hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, host_link_map[host])  # adding new event
+                host.create_message(different_timeline, hosts, all_l2messages, min_payload_size, max_payload_size,
+                                    printing_flag, host_link_map[host])  # adding new event
+                different_timeline.done()  # remove event
+
+            elif event.event_type == "sending a message":
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
+                link = SimulationFunctions.find_link(links, host.nic)
+                if not isinstance(host, Host):
+                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
+                host.send_message(different_timeline, link, printing_flag)  # sending the list
+                different_timeline.done()  # remove event
+
+            elif event.event_type == "transmitted":
+                host = SimulationFunctions.find_host(hosts, event.scheduling_object_id)
+                link = SimulationFunctions.find_link(links, host.nic)
+                if not isinstance(host, Host):
+                    raise ValueError("there is event without real host (How the hell you succeed to do it?) ")
+                host.message_tranmitted(different_timeline, link, printing_flag)  # sending the list
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":
@@ -58,7 +96,8 @@ class PartA:
                 l2_message = SimulationFunctions.find_l2message(all_l2messages, event.message_id)
                 if not isinstance(receiver, Host) and not isinstance(receiver, Switch):
                     raise ValueError("there is event without real host or switch (How the hell you succeed to do it?) ")
-                receiver.handle_message(l2_message, all_l2messages, different_timeline, event.scheduled_time, event.link_id, printing_flag)
+                receiver.handle_message(l2_message, all_l2messages, different_timeline, event.scheduled_time,
+                                        event.link_id, printing_flag)
                 all_l2messages.remove(l2_message)  # remove the l2message
                 different_timeline.done()  # remove event
 
@@ -66,10 +105,12 @@ class PartA:
                 should_terminate = True
                 print("Simulation ended successfully")
 
-        mac_table_log_file.close()
+        if mac_table_log_file is not None:
+            mac_table_log_file.close()
 
         # Visualization
         SimulationFunctions.draw_topology(switches, hosts, links)
+
 
 # Run the main function when the script is executed
 if __name__ == "__main__":
