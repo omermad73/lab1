@@ -65,6 +65,7 @@ class SwitchLab2(Switch):
             self.queues[self.get_real_queue(queue_num)[0]][self.get_real_queue(queue_num)[1]].put(temp)
             return temp
 
+
     def handle_message(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
         dst_mac = l2_message.dst_mac
@@ -101,7 +102,7 @@ class SwitchLab2(Switch):
                 if port != dest_port:  # if not the switch should drop the message
                     self.enqueue(l2_message, dest_port)
                     if not self.port_is_blocked[port]:
-                        event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[port])
+                        event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[dest_port])
                         timeline.add_event(event)
             else:  # that if the link was disconnected
                 pass
@@ -156,6 +157,7 @@ class SwitchLab2(Switch):
                         # If the port is not blocked, the switch will send the message
                         self.first_message_output(timeline, out_port, all_l2messages, printing_flag)
 
+
     def handle_message_virtual_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
         dst_mac = l2_message.dst_mac
@@ -202,6 +204,7 @@ class SwitchLab2(Switch):
         # = time of sending
         event = Event(time, "transmitted", self.id, None, None, self.nic)
         timeline.add_event(event)
+
 
     def message_transmitted(self, timeline, queue_num, all_l2messages, printing_flag):  # TODO: add all_l2messages
         if printing_flag == 1:
@@ -296,5 +299,6 @@ class SwitchLab2(Switch):
                 self.enqueue(duplicated_message, out_port)
 
         if printing_flag == 1:
-            print(f"Switch: {self.id} \033[35m Duplicated for future flood\033[0m the message (size: {l2_message.message_size}) "
-                  f"at time: {time:.6f}")
+            print(
+                f"Switch: {self.id} \033[35m Duplicated for future flood\033[0m the message (size: {l2_message.message_size}) "
+                f"at time: {time:.6f}")
