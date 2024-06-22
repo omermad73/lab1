@@ -25,8 +25,8 @@ class PartA:
 
         # topology configuration
         different_timeline = Timeline()
-        num_source_hosts = 1 #random.randint(3, 7)
-        num_dest_hosts = 1
+        num_source_hosts = random.randint(3, 7)
+        num_dest_hosts = 2
         port_num_s0 = 8
 
         tx_rate = 3
@@ -128,7 +128,7 @@ class PartA:
             mac_table_log_file.close()
 
         # Visualization
-        SimulationFunctions.draw_topology(switches, hosts, links)
+        SimulationFunctions.draw_topology(switches, source_hosts, links,dest_hosts)
 
 
 # Run the main function when the script is executed
