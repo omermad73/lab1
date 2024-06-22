@@ -25,7 +25,7 @@ class PartA:
 
         # topology configuration
         different_timeline = Timeline()
-        num_source_hosts = 1#random.randint(3, 7)
+        num_source_hosts = 1 #random.randint(3, 7)
         num_dest_hosts = 1
         port_num_s0 = 8
 

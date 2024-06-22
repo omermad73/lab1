@@ -90,6 +90,10 @@ class SwitchLab2(Switch):
                 pass
         else:
             self.duplicat(port,l2_message,time,printing_flag)  # duplicate the message for future flooding
+            self.dequeue(port)
+        if not self.port_is_blocked[port]:
+            event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[0])
+            timeline.add_event(event)
 
         dest_port = self.find_port(dst_mac, current_time)  # TODO: START SENDIN
         if dest_port is not None:  # If the destination port is found in the MAC table
@@ -113,10 +117,12 @@ class SwitchLab2(Switch):
             if out_port != port and link is not None:
                 duplicated_message = copy.copy(l2_message)
                 self.enqueue(duplicated_message, out_port)
+
+
         if printing_flag == 1:
             print(f"Switch: {self.id} \033[35m Duplicated for future flood\033[0m the message (size: {l2_message.message_size}) "
                   f"at time: {time:.6f}")  # TODO: the time is not correct
-            # TODO: Stop sending
+
 
 
 
