@@ -6,7 +6,7 @@ from Event import Event
 
 
 class SwitchLab2(Switch):
-    def __init__(self, num_ports, mac_table_size, q_type, is_fluid=False, schedule_alg='FIFO', log_file=None, ttl=10):
+    def __init__(self, num_ports, mac_table_size, q_type="input", is_fluid=False, schedule_alg='FIFO', log_file=None, ttl=10):
         super().__init__(num_ports, mac_table_size, log_file, ttl)
         self.q_type = q_type
         self.is_fluid = is_fluid
@@ -50,7 +50,7 @@ class SwitchLab2(Switch):
         elif self.q_type == 'virtual_output':
             self.queues[self.get_real_queue(queue_num)[0]][self.get_real_queue(queue_num)[1]].put(message)
 
-    def dequeue(self, queue_num):
+     def dequeue(self, queue_num):
         # This function is used to dequeue a message from the queue
         # The function returns the first message after removing
         if self.q_type == 'input' or self.q_type == 'output':
@@ -64,10 +64,12 @@ class SwitchLab2(Switch):
             self.queues[self.get_real_queue(queue_num)[0]][self.get_real_queue(queue_num)[1]].put(temp)
             return temp
 
+
     def handle_message(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
+
         if printing_flag == 1:
             print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port"
                   f" {port} at time: {current_time:.6f}, MAC table updated")
@@ -80,17 +82,86 @@ class SwitchLab2(Switch):
             self.handle_message_output(l2_message, all_l2messages, timeline, current_time, link_id, printing_flag)
         elif self.q_type == 'virtual_output':
             self.handle_message_virtual_output(l2_message, all_l2messages, timeline, current_time, link_id, printing_flag)
-
+            
     def handle_message_input(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
+        time = timeline.events[0].scheduled_time
         self.enqueue(l2_message, port)
-        # TODO: add if qeue empty send message
+
+      def handle_message_input(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+        src_mac = l2_message.src_mac
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
+        time = timeline.events[0].scheduled_time
+        self.enqueue(l2_message, port)
+
+        if printing_flag == 1:
+            print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port"
+                  f" {port} at time: {current_time:.6f}, MAC table updated")
+            print(f"Source MAC: {src_mac} Destination MAC: {dst_mac}")
+
+        dest_port = self.find_port(dst_mac, current_time)
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    self.enqueue(l2_message, dest_port)
+                    if not self.port_is_blocked[port]:
+                        event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[port])
+                        timeline.add_event(event)
+            else:  # that if the link was disconnected
+                pass
+        else:
+            self.duplicat(port,l2_message,time,printing_flag)  # duplicate the message for future flooding
+            self.dequeue(port)
+        if not self.port_is_blocked[port]:
+            event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[0])
+            timeline.add_event(event)
+
+        dest_port = self.find_port(dst_mac, current_time)  # TODO: START SENDIN
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    self.send_message(timeline, dest_port, l2_message, all_l2messages)
+                    if printing_flag == 1:
+                        print(
+                            f"Switch: {self.id} \033[36msending\033[0m the message (size: {l2_message.message_size}) to port {dest_port} at time: {current_time:.6f}")
+            else:  # that if the link was disconnected
+                pass
+        else:
+            self.flood_message(timeline, port, l2_message,
+                               all_l2messages)  # If the destination port is not found, flood the message
+            if printing_flag == 1:
+                print(
+                    f"Switch: {self.id} \033[35mflooding\033[0m the message (size: {l2_message.message_size}) at time: {current_time:.6f}")
+
+       def duplicat(self,port,l2_message,time,printing_flag):  # duplicate message for future flooding
+        for out_port, link in enumerate(self.ports):
+            if out_port != port and link is not None:
+                duplicated_message = copy.copy(l2_message)
+                self.enqueue(duplicated_message, out_port)
+
+
+        if printing_flag == 1:
+            print(f"Switch: {self.id} \033[35m Duplicated for future flood\033[0m the message (size: {l2_message.message_size}) "
+                  f"at time: {time:.6f}")
 
     def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
+
+
+        dest_port = self.find_port(dst_mac, current_time)
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    self.enqueue(l2_message, dest_port)
+
+ def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
+
 
         dest_port = self.find_port(dst_mac, current_time)
         if dest_port is not None:  # If the destination port is found in the MAC table
@@ -113,6 +184,7 @@ class SwitchLab2(Switch):
                     if self.port_is_blocked[out_port] is False:
                         # If the port is not blocked, the switch will send the message
                         self.message_transmitted(timeline, out_port, all_l2messages, printing_flag)
+
 
     def handle_message_virtual_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
@@ -141,7 +213,7 @@ class SwitchLab2(Switch):
                       f"at time: {current_time:.6f}")
 
     def send_message_think(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
-        link = self.ports[link_id]  # fix to port
+        link = self.ports[port]
         if link.host1.id != self.id:
             dest_id = link.host1.id
         else:
@@ -160,6 +232,7 @@ class SwitchLab2(Switch):
         # = time of sending
         event = Event(time, "transmitted", self.id, None, None, self.nic)
         timeline.add_event(event)
+
 
     def message_transmitted(self, timeline, queue_num, all_l2messages, printing_flag):  # TODO: add all_l2messages
         if printing_flag == 1:
@@ -198,8 +271,9 @@ class SwitchLab2(Switch):
     def message_transmitted_input(self, timeline, queue_num, printing_flag):
         current_time = timeline.events[0].scheduled_time
         if printing_flag == 1:
-            print(f"Switch: {self.id} \033[32mtransmitted\033[0m a message to link {0} at time: "
-                  f"{current_time:.6f}")  # TODO: change link
+            print(f"Switch: {self.id} \033[32mtransmitted\033[0m a message to link {link.id} at time: "
+                  f"{current_time:.6f}")
+
 
         next_message = self.dequeue(queue_num)
         dst_mac = next_message.dst_mac

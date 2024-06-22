@@ -25,12 +25,17 @@ class PartA:
 
         # topology configuration
         different_timeline = Timeline()
-        num_source_hosts = 1#random.randint(3, 7)
+
+        num_source_hosts = 1 #random.randint(3, 7)
+
         num_dest_hosts = 1
         port_num_s0 = 8
 
         # switch 2 configuration
+
+        q_type = "input"
         q_type = "output"
+
         is_fluid = False
         schedule_alg = 'FIFO'
         ttl = 10
@@ -46,6 +51,7 @@ class PartA:
         links = []
         switch_links = []
         for host in source_hosts:
+
             link = Link(host, switch, 1, 0.2)
             links.append(link)
             switch_links.append(link)
@@ -101,7 +107,6 @@ class PartA:
                     receiver.message_transmitted(different_timeline, event.link_id, all_l2messages, printing_flag)
                 else:
                     raise ValueError("there is event without real host or switch (How the hell you succeed to do it?) ")
-
                 different_timeline.done()  # remove event
 
             elif event.event_type == "message received":
