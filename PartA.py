@@ -13,7 +13,7 @@ class PartA:
     @staticmethod
     def main():
         # simulation settings
-        number_of_packets = 20
+        number_of_packets = 1
         lambda_param = 0.5
         min_payload_size = 10
         max_payload_size = 20
@@ -73,7 +73,6 @@ class PartA:
 
         for host in hosts:
             SimulationFunctions.generate_times(host.id, different_timeline, number_of_packets, lambda_param)
-
         #  main loop
         while not should_terminate and different_timeline.events[0].scheduled_time < terminate:
             event = different_timeline.events[0]

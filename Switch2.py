@@ -14,6 +14,7 @@ class SwitchLab2(Switch):
         self.queues = self.configure_queues()
         self.totalHoLTime = 0
         self.queue_to_HoLTime = {}
+        self.port_is_blocked = [False] * self.num_ports
 
     def configure_queues(self):
         if self.q_type == 'input' or self.q_type == 'output':
@@ -69,12 +70,26 @@ class SwitchLab2(Switch):
         src_mac = l2_message.src_mac
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
+        time = timeline.events[0].scheduled_time
         self.enqueue(l2_message, port)
 
         if printing_flag == 1:
             print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port"
                   f" {port} at time: {current_time:.6f}, MAC table updated")
             print(f"Source MAC: {src_mac} Destination MAC: {dst_mac}")
+
+        dest_port = self.find_port(dst_mac, current_time)
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    self.enqueue(l2_message, dest_port)
+                    if not self.port_is_blocked[port]:
+                        event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[port])
+                        timeline.add_event(event)
+            else:  # that if the link was disconnected
+                pass
+        else:
+            self.duplicat(port,l2_message,time,printing_flag)  # duplicate the message for future flooding
 
         dest_port = self.find_port(dst_mac, current_time)  # TODO: START SENDIN
         if dest_port is not None:  # If the destination port is found in the MAC table
@@ -93,22 +108,18 @@ class SwitchLab2(Switch):
                 print(
                     f"Switch: {self.id} \033[35mflooding\033[0m the message (size: {l2_message.message_size}) at time: {current_time:.6f}")
 
-        dest_port = self.find_port(dst_mac, current_time)
-        if dest_port is not None:  # If the destination port is found in the MAC table
-            if self.ports[dest_port] is not None:  # If the destination port is connected
-                if port != dest_port:  # if not the switch should drop the message
-                    self.enqueue(l2_message, dest_port)
-            else:  # that if the link was disconnected
-                pass
-        else:
-            for out_port, link in enumerate(self.ports):
-                if out_port != port and link is not None:
-                    duplicated_message = copy.copy(l2_message)
-                    self.enqueue(duplicated_message, out_port)
-            if printing_flag == 1:
-                print(f"Switch: {self.id} \033[35m will flood\033[0m the message (size: {l2_message.message_size}) "
-                      f"at time: {current_time:.6f}")  # TODO: the time is not correct
-                # TODO: Stop sending
+    def duplicat(self,port,l2_message,time,printing_flag):  # duplicate message for future flooding
+        for out_port, link in enumerate(self.ports):
+            if out_port != port and link is not None:
+                duplicated_message = copy.copy(l2_message)
+                self.enqueue(duplicated_message, out_port)
+        if printing_flag == 1:
+            print(f"Switch: {self.id} \033[35m Duplicated for future flood\033[0m the message (size: {l2_message.message_size}) "
+                  f"at time: {time:.6f}")  # TODO: the time is not correct
+            # TODO: Stop sending
+
+
+
 
     def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
