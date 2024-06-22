@@ -18,18 +18,19 @@ class PartA:
         min_payload_size = 10
         max_payload_size = 20
         printing_flag = 1
-        terminate = 100000 # [sec] after this time the simulation is eliminated
+        terminate = 100000  # [sec] after this time the simulation is eliminated
         file_name = "macTableLog.txt"
         mac_table_log_file = open(file_name, 'w')
         mac_table_log_file = None
 
         # topology configuration
         different_timeline = Timeline()
-
         num_source_hosts = 1 #random.randint(3, 7)
-
         num_dest_hosts = 1
         port_num_s0 = 8
+
+        tx_rate = 3
+        propagation = 0.0
 
         # switch 2 configuration
 
@@ -52,11 +53,11 @@ class PartA:
         switch_links = []
         for host in source_hosts:
 
-            link = Link(host, switch, 1, 0.2)
+            link = Link(host, switch, tx_rate, propagation)
             links.append(link)
             switch_links.append(link)
         for host in dest_hosts:
-            link = Link(host, switch, 1, 0.2)
+            link = Link(host, switch, tx_rate, propagation)
             links.append(link)
             switch_links.append(link)
 
