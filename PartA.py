@@ -1,10 +1,13 @@
 import random
 from Event import Event
 from Host import Host
+from Host2 import Host2
+
 from Timeline import Timeline
 from Link import Link
 from SimulationFunctions import SimulationFunctions
 from Switch import Switch
+from Switch2 import SwitchLab2
 
 class PartA:
     @staticmethod
@@ -15,32 +18,39 @@ class PartA:
         min_payload_size = 10
         max_payload_size = 20
         printing_flag = 1
-        terminate = 100  # [sec] after this time the simulation is eliminated
+        terminate = 100000 # [sec] after this time the simulation is eliminated
         file_name = "macTableLog.txt"
         mac_table_log_file = open(file_name, 'w')
         mac_table_log_file = None
 
         # topology configuration
         different_timeline = Timeline()
-        num_source_hosts = random.randint(3, 7)
-        num_dest_hosts = 2
+        num_source_hosts = 1#random.randint(3, 7)
+        num_dest_hosts = 1
         port_num_s0 = 8
+
+        # switch 2 configuration
+        q_type = "input"
+        is_fluid = False
+        schedule_alg = 'FIFO'
+        ttl = 10
+        mac_table_size = 10
         # Creating switches
-        switch = Switch(port_num_s0, 10, mac_table_log_file)
+        switch = SwitchLab2(port_num_s0, mac_table_size,q_type, is_fluid, schedule_alg, mac_table_log_file, ttl)
         #switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
         # Creating hosts
-        source_hosts = SimulationFunctions.create_hosts(0, num_source_hosts)
-        dest_hosts = SimulationFunctions.create_hosts(num_source_hosts, num_dest_hosts)
+        source_hosts = SimulationFunctions.create_hosts2(0, num_source_hosts)
+        dest_hosts = SimulationFunctions.create_hosts2(num_source_hosts, num_dest_hosts)
         hosts = source_hosts + dest_hosts
         # Creating links
         links = []
         switch_links = []
         for host in source_hosts:
-            link = Link(host, switch, 3)
+            link = Link(host, switch, 1)
             links.append(link)
             switch_links.append(link)
         for host in dest_hosts:
-            link = Link(host, switch, 3)
+            link = Link(host, switch, 1)
             links.append(link)
             switch_links.append(link)
 

@@ -6,7 +6,7 @@ from Event import Event
 
 
 class SwitchLab2(Switch):
-    def __init__(self, num_ports, mac_table_size, q_type, is_fluid=False, schedule_alg='FIFO', log_file=None, ttl=10):
+    def __init__(self, num_ports, mac_table_size, q_type="input", is_fluid=False, schedule_alg='FIFO', log_file=None, ttl=10):
         super().__init__(num_ports, mac_table_size, log_file, ttl)
         self.q_type = q_type
         self.is_fluid = is_fluid
@@ -76,15 +76,22 @@ class SwitchLab2(Switch):
                   f" {port} at time: {current_time:.6f}, MAC table updated")
             print(f"Source MAC: {src_mac} Destination MAC: {dst_mac}")
 
-    def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
-        src_mac = l2_message.src_mac
-        dst_mac = l2_message.dst_mac
-        port = self.link_to_port(link_id)
-
-        if printing_flag == 1:
-            print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port"
-                  f" {port} at time: {current_time:.6f}, MAC table updated")
-            print(f"Source MAC: {src_mac} Destination MAC: {dst_mac}")
+        dest_port = self.find_port(dst_mac, current_time)  # TODO: START SENDIN
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    self.send_message(timeline, dest_port, l2_message, all_l2messages)
+                    if printing_flag == 1:
+                        print(
+                            f"Switch: {self.id} \033[36msending\033[0m the message (size: {l2_message.message_size}) to port {dest_port} at time: {current_time:.6f}")
+            else:  # that if the link was disconnected
+                pass
+        else:
+            self.flood_message(timeline, port, l2_message,
+                               all_l2messages)  # If the destination port is not found, flood the message
+            if printing_flag == 1:
+                print(
+                    f"Switch: {self.id} \033[35mflooding\033[0m the message (size: {l2_message.message_size}) at time: {current_time:.6f}")
 
         dest_port = self.find_port(dst_mac, current_time)
         if dest_port is not None:  # If the destination port is found in the MAC table
@@ -100,7 +107,20 @@ class SwitchLab2(Switch):
                     self.enqueue(duplicated_message, out_port)
             if printing_flag == 1:
                 print(f"Switch: {self.id} \033[35m will flood\033[0m the message (size: {l2_message.message_size}) "
-                      f"at time: {current_time:.6f}")
+                      f"at time: {current_time:.6f}")  # TODO: the time is not correct
+                # TODO: Stop sending
+
+    def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+        src_mac = l2_message.src_mac
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
+
+        if printing_flag == 1:
+            print(f"Switch: {self.id} \033[34mreceived\033[0m a message (size: {l2_message.message_size}) from port"
+                  f" {port} at time: {current_time:.6f}, MAC table updated")
+            print(f"Source MAC: {src_mac} Destination MAC: {dst_mac}")
+
+
 
     def handle_message_virtual_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac

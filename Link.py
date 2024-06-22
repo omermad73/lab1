@@ -17,3 +17,7 @@ class Link(GNO):
         # propagation delay + transmission delay
         total_delay = self.propagation + l2_message.message_size / self.tx_rate
         return total_delay
+
+    def transmit_delay(self, l2_message):
+        # Calculate the transmission delay
+        return l2_message.message_size / self.tx_rate
