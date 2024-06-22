@@ -127,6 +127,10 @@ class PartA:
         if mac_table_log_file is not None:
             mac_table_log_file.close()
 
+        #statsitcs:
+        if printing_flag == 1:
+            switch.print_statistics()
+
         # Visualization
         SimulationFunctions.draw_topology(switches, source_hosts, links,dest_hosts)
 
