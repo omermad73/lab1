@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from Host import Host
+from Host2 import Host2
 from Event import Event
 
 
@@ -27,6 +28,14 @@ class SimulationFunctions:
             if host.id == id:
                 return host
         print("there is not such host")
+        return None
+
+    @staticmethod
+    def find_link(links, id):
+        for link in links:
+            if link.id == id:
+                return link
+        print("there is not such link")
         return None
 
     @staticmethod
@@ -56,6 +65,15 @@ class SimulationFunctions:
             mac_address = f"00:00:00:00:00:{i:02d}"  # Format the MAC address
             host = Host(mac_address)
             hosts.append(host)
+        return hosts
+
+    @staticmethod
+    def create_hosts2(starting_index, num_hosts):
+        hosts = []
+        for i in range(starting_index + 1, starting_index + num_hosts + 1):
+            mac_address = f"00:00:00:00:00:{i:02d}"  # Format the MAC address
+            host2 = Host2(mac_address)
+            hosts.append(host2)
         return hosts
 
     @staticmethod
