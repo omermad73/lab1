@@ -50,7 +50,7 @@ class SwitchLab2(Switch):
         elif self.q_type == 'virtual_output':
             self.queues[self.get_real_queue(queue_num)[0]][self.get_real_queue(queue_num)[1]].put(message)
 
-     def dequeue(self, queue_num):
+    def dequeue(self, queue_num):
         # This function is used to dequeue a message from the queue
         # The function returns the first message after removing
         if self.q_type == 'input' or self.q_type == 'output':
@@ -90,7 +90,7 @@ class SwitchLab2(Switch):
         time = timeline.events[0].scheduled_time
         self.enqueue(l2_message, port)
 
-      def handle_message_input(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+    def handle_message_input(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
@@ -136,7 +136,7 @@ class SwitchLab2(Switch):
                 print(
                     f"Switch: {self.id} \033[35mflooding\033[0m the message (size: {l2_message.message_size}) at time: {current_time:.6f}")
 
-       def duplicat(self,port,l2_message,time,printing_flag):  # duplicate message for future flooding
+    def duplicat(self,port,l2_message,time,printing_flag):  # duplicate message for future flooding
         for out_port, link in enumerate(self.ports):
             if out_port != port and link is not None:
                 duplicated_message = copy.copy(l2_message)
@@ -158,7 +158,7 @@ class SwitchLab2(Switch):
                 if port != dest_port:  # if not the switch should drop the message
                     self.enqueue(l2_message, dest_port)
 
- def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+    def handle_message_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
 
@@ -213,7 +213,7 @@ class SwitchLab2(Switch):
                       f"at time: {current_time:.6f}")
 
     def send_message_think(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
-        link = self.ports[port]
+        link = self.ports[port]  # TODO: fix this
         if link.host1.id != self.id:
             dest_id = link.host1.id
         else:
