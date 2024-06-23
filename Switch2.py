@@ -17,6 +17,7 @@ class SwitchLab2(Switch):
         for i in range(num_ports):
             self.queue_to_HoLTime[i] = 0
         self.port_is_blocked = [False] * self.num_ports
+        self.HoL_destinations = [None] * self.num_ports
 
     def configure_queues(self):
         if self.q_type == 'input' or self.q_type == 'output':
@@ -212,35 +213,21 @@ class SwitchLab2(Switch):
 
     def message_transmitted_input(self, timeline, queue_num, printing_flag):
         current_time = timeline.events[0].scheduled_time
-        if printing_flag == 1:
-            print(f"Switch: {self.id} \033[32mtransmitted\033[0m a message to link {link.id} at time: "
-                  f"{current_time:.6f}")
+        input_port = self.self.get_real_queue(queue_num)[0]
+        output_port = self.self.get_real_queue(queue_num)[1]
 
+        next_message = self.dequeue(input_port)
+        if next_message is not None:
+            dst_mac = next_message.dst_mac
+            # find the destination port for next message
+            self.sending_non_float(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag)
 
-        next_message = self.dequeue(queue_num)
-        dst_mac = next_message.dst_mac
-        source_port = queue_num
-        dest_port = self.find_port(dst_mac, current_time)
-        if dest_port is not None:  # If the destination port is found in the MAC table
-            if self.ports[dest_port] is not None:  # If the destination port is connected
-                if source_port != dest_port:  # if not the switch should drop the message
-                    self.enqueue(next_message, dest_port)
-            else:  # that if the link was disconnected
-                pass
-        else:
-            for out_port, link in enumerate(self.ports):
-                if out_port != source_port and link is not None:
-                    duplicated_message = copy.copy(next_message)
-                    self.enqueue(duplicated_message, out_port)
-            if printing_flag == 1:
-                print(f"Switch: {self.id} \033[35m will flood\033[0m the message (size: {next_message.message_size}"
-                      f") "f"at time: {current_time:.6f}")
 
     def message_transmitted_output(self, timeline, queue_num, all_l2messages, printing_flag):
         current_time = timeline.events[0].scheduled_time
 
         self.port_is_blocked[queue_num] = False
-        self.totalHoLTime += self.queue_to_HoLTime[queue_num]
+        self.totalHoLTime += current_time - self.queue_to_HoLTime[queue_num]
         self.queue_to_HoLTime[queue_num] = 0
         next_message = self.dequeue(queue_num)
         if next_message is None:
@@ -319,3 +306,20 @@ class SwitchLab2(Switch):
 
     def print_statistics(self):
         print(f"Switch: {self.id} \033[32mTotal time\033[0m in the Head of Line: {self.totalHoLTime:.6f}")
+
+    def sending_non_float(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+        # if can - sending non floading messaeg
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
+        time = timeline.events[0].scheduled_time
+
+        dest_port = self.find_port(dst_mac, current_time)
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    # self.enqueue(l2_message, port)
+                    # TODO: check if the message is in the head of line, in input queue not necessary
+                    self.flooding_tabel[port].append(dest_port)
+                    return True
+        else:
+            return False
