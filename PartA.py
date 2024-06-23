@@ -35,7 +35,7 @@ class PartA:
         # switch 2 configuration
 
         q_type = "input"
-        q_type = "output"
+        #q_type = "output"
 
         is_fluid = False
         schedule_alg = 'FIFO'
