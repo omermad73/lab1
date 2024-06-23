@@ -17,6 +17,8 @@ class SwitchLab2(Switch):
         for i in range(num_ports):
             self.queue_to_HoLTime[i] = 0
         self.port_is_blocked = [False] * self.num_ports
+        self.flooding_tabel = [[],[],[],[]]
+        self.start_to_flood = False
 
     def configure_queues(self):
         if self.q_type == 'input' or self.q_type == 'output':
@@ -86,6 +88,56 @@ class SwitchLab2(Switch):
     def handle_message_input(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         dst_mac = l2_message.dst_mac
         port = self.link_to_port(link_id)
+        self.enqueue(l2_message, port)
+
+        time = timeline.events[0].scheduled_time
+        dest_port = self.find_port(dst_mac, current_time)
+
+        if self.queues[port].empty():
+            self.sending_non_float(l2_message, all_l2messages, timeline, current_time, link_id, printing_flag)
+            if not self.port_is_blocked[dest_port]:
+                event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[port])
+                timeline.add_event(event)
+
+    def sending_non_float(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+        #if can - sending non floading messaeg
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
+        time = timeline.events[0].scheduled_time
+
+        dest_port = self.find_port(dst_mac, current_time)
+        if dest_port is not None:  # If the destination port is found in the MAC table
+            if self.ports[dest_port] is not None:  # If the destination port is connected
+                if port != dest_port:  # if not the switch should drop the message
+                    #self.enqueue(l2_message, port)
+                    # TODO: check if the message is in the head of line, in input queue not necessary
+                    self.flooding_tabel[port].append(dest_port)
+                    return True
+        else:
+            return False
+
+    def sending_float(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
+        # one time function that write to the sending matrix to what port we need to send the message
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
+        time = timeline.events[0].scheduled_time
+        self.start_to_flood = True
+
+        if not self.start_to_flood:
+            for dest_port in self.ports:
+                if dest_port != port:
+                    self.flooding_tabel[port].append(dest_port)  # adding all the port we need to flood
+                    if not self.port_is_blocked[dest_port]:  # if the  out port is free
+                        copy_l2_message = copy.copy(l2_message)
+                        event = Event(time, "sending a message", self.id, self.id, copy_l2_message.id,
+                                      self.ports[dest_port])  # send the mesage
+                        timeline.add_event(event)
+        return
+
+
+    def handle_head_input(self,printing_flag):
+        dst_mac = l2_message.dst_mac
+        port = self.link_to_port(link_id)
         time = timeline.events[0].scheduled_time
 
         dest_port = self.find_port(dst_mac, current_time)
@@ -95,17 +147,19 @@ class SwitchLab2(Switch):
                     self.enqueue(l2_message, port)
                     # TODO: check if the message is in the head of line, in input queue not necessary
                     if not self.port_is_blocked[dest_port]:
-                        # TODO: START SENDING
                         event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[port])
                         timeline.add_event(event)
             else:  # that if the link was disconnected
                 pass
-        else:
-            self.duplicat(port, l2_message, time, printing_flag)  # duplicate the message for future flooding
-            self.dequeue(port)
-        if not self.port_is_blocked[port]:
-            event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.ports[0])
-            timeline.add_event(event)
+        else:  # TODO: fix this - its work for only the first message
+            for dest_port in self.ports:
+                if dest_port != port:
+                    self.flooding_tabel[port].append(dest_port)  # adding all the port we need to flood
+                    if not self.port_is_blocked[dest_port]:  # if the  out port is free
+                        copy_l2_message = copy.copy(l2_message)
+                        event = Event(time, "sending a message", self.id, self.id, copy_l2_message.id,
+                                      self.ports[dest_port])  # send the mesage
+                        timeline.add_event(event)
 
         dest_port = self.find_port(dst_mac, current_time)  # TODO: START SENDIN
         if dest_port is not None:  # If the destination port is found in the MAC table
@@ -149,7 +203,7 @@ class SwitchLab2(Switch):
                     self.enqueue(duplicated_message, out_port)
                     if self.port_is_blocked[out_port] is False:
                         # If the port is not blocked, the switch will send the message
-                        self.first_message_output(timeline, out_port, all_l2messages, printing_flag)
+                            self.first_message_output(timeline, out_port, all_l2messages, printing_flag)
 
     def handle_message_virtual_output(self, l2_message, all_l2messages, timeline, current_time, link_id, printing_flag):
         src_mac = l2_message.src_mac
