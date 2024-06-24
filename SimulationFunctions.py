@@ -2,6 +2,7 @@ import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
 from Host import Host
+from Host2 import Host2
 from Event import Event
 
 
@@ -27,6 +28,14 @@ class SimulationFunctions:
             if host.id == id:
                 return host
         print("there is not such host")
+        return None
+
+    @staticmethod
+    def find_link(links, id):
+        for link in links:
+            if link.id == id:
+                return link
+        print("there is not such link")
         return None
 
     @staticmethod
@@ -59,14 +68,26 @@ class SimulationFunctions:
         return hosts
 
     @staticmethod
-    def draw_topology(switches, hosts, links):
+    def create_hosts2(starting_index, num_hosts):
+        hosts = []
+        for i in range(starting_index + 1, starting_index + num_hosts + 1):
+            mac_address = f"00:00:00:00:00:{i:02d}"  # Format the MAC address
+            host2 = Host2(mac_address)
+            hosts.append(host2)
+        return hosts
+
+    @staticmethod
+    def draw_topology(switches, source_hosts, links, dest_hosts=None):
         G = nx.Graph()
 
         # Add nodes with attributes
         for switch in switches:
             G.add_node(switch.id, type='switch')
-        for host in hosts:
-            G.add_node(host.id, type='host')
+        for host in source_hosts:
+            G.add_node(host.id, type='source_host')
+        if dest_hosts is not None:
+            for host in dest_hosts:
+                G.add_node(host.id, type='dest_host')
 
         # Add edges
         for link in links:
@@ -80,6 +101,8 @@ class SimulationFunctions:
         for node in G.nodes(data=True):
             if node[1]['type'] == 'switch':
                 node_colors.append('lightblue')
+            elif node[1]['type'] == 'dest_host':
+                node_colors.append('red')
             else:
                 node_colors.append('gray')
 
@@ -87,8 +110,10 @@ class SimulationFunctions:
         # Add legend
         plt.text(0.02, 0.98, "Switch", horizontalalignment='left', verticalalignment='top',
                  transform=plt.gca().transAxes, bbox=dict(facecolor='lightblue', alpha=0.5))
-        plt.text(0.02, 0.92, "Host", horizontalalignment='left', verticalalignment='top',
+        plt.text(0.02, 0.92, "Source Host", horizontalalignment='left', verticalalignment='top',
                  transform=plt.gca().transAxes, bbox=dict(facecolor='gray', alpha=0.5))
+        plt.text(0.02, 0.86, "Dest Hosts", horizontalalignment='left', verticalalignment='top',
+                 transform=plt.gca().transAxes, bbox=dict(facecolor='red', alpha=0.5))
 
         # Display the graph
         plt.show()
