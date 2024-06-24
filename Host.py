@@ -61,7 +61,6 @@ class Host(GNO):
                   ")", end=' ')
             print("to host", l2_message.dst_mac, "at time:", f"{time:.6f}")
 
-
     def handle_message(self, l2_message, all_l2messages, timeline, current_time, port, printing_flag):
         if self.mac == l2_message.src_mac:
             raise ValueError(f"host {self.mac} received a message (size: {l2_message.message_size}) from itself")

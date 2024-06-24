@@ -27,7 +27,7 @@ class PartA:
         different_timeline = Timeline()
         num_source_hosts = random.randint(3, 7)
         num_dest_hosts = 2
-        port_num_s0 = 8
+        port_num_s0 = 16
 
         tx_rate = 3
         propagation = 0.0
@@ -35,15 +35,16 @@ class PartA:
         # switch 2 configuration
 
         q_type = "input"
-        #q_type = "output"
+        q_type = "output"
+        q_type = "virtual_output"
 
         is_fluid = False
         schedule_alg = 'FIFO'
         ttl = 10
         mac_table_size = 10
         # Creating switches
-        switch = SwitchLab2(port_num_s0, mac_table_size,q_type, is_fluid, schedule_alg, mac_table_log_file, ttl)
-        #switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
+        switch = SwitchLab2(port_num_s0, mac_table_size, q_type, is_fluid, schedule_alg, mac_table_log_file, ttl)
+        # switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
         # Creating hosts
         source_hosts = SimulationFunctions.create_hosts2(0, num_source_hosts)
         dest_hosts = SimulationFunctions.create_hosts2(num_source_hosts, num_dest_hosts)
