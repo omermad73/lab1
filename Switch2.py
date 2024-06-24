@@ -328,7 +328,7 @@ class SwitchLab2(Switch):
         # check if there is a next message to send
         if next_message is None:
             return
-        if self.queues[input_port].empty():
+        if not self.queues[input_port]:
             raise Exception("Queue is empty")
 
         if self.port_is_blocked[output_port] is False:
@@ -339,7 +339,7 @@ class SwitchLab2(Switch):
             time = current_time + link.transmit_delay(next_message)  # calculation of arrival time
             # = time of sending
             self.port_is_blocked[dest_port] = True
-            event = Event(time, "transmitted", self.id, None, None, self.get_fake_queue([oldest_port, dest_port]))
+            event = Event(time, "transmitted", self.id, None, None, self.get_fake_queue([input_port, dest_port]))
             timeline.add_event(event)
             if printing_flag == 1:
                 print(f"Switch: {self.id} \033[36msending\033[0m the message (size: {next_message.message_size}) to"

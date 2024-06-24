@@ -25,7 +25,7 @@ class PartA:
 
 
         #  confige the ranodm seed for the entire Toplgy
-        seed = 42
+        seed = 9
         random.seed(seed)
         SimulationFunctions.random_seed(seed)
 
