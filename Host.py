@@ -17,6 +17,9 @@ class Host(GNO):
 
     def create_message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, link):
         dest_host = self.get_random_host(all_hosts)
+        self.create_l2message(timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, link, dest_host)
+
+    def create_l2message(self, timeline, all_hosts, all_l2messages, min_payload_size, max_payload_size, printing_flag, link, dest_host):
         # Create an L2 Message
         dest_mac = dest_host.mac
         payload_size = self.get_random_payload_size(min_payload_size, max_payload_size)
@@ -32,7 +35,7 @@ class Host(GNO):
             print("to host", l2_message.dst_mac, "at time:", f"{time:.6f}")
         self.buffer.append(l2_message)  # sending the message
 
-        #if this is the first message after the "quit time"
+        # if this is the first message after the "quit time"
         if len(self.buffer) == 1:
             time = timeline.events[0].scheduled_time
             event = Event(time, "sending a message", self.id, self.id, l2_message.id, self.nic)
@@ -60,7 +63,6 @@ class Host(GNO):
             print("Host:", l2_message.src_mac, "\033[36msending\033[0m an L2 Message (size:", l2_message.message_size,
                   ")", end=' ')
             print("to host", l2_message.dst_mac, "at time:", f"{time:.6f}")
-
 
     def handle_message(self, l2_message, all_l2messages, timeline, current_time, port, printing_flag):
         if self.mac == l2_message.src_mac:

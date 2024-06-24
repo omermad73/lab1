@@ -13,7 +13,7 @@ class PartA:
     @staticmethod
     def main():
         # simulation settings
-        number_of_packets = 1
+        number_of_packets = 2
         lambda_param = 0.5
         min_payload_size = 10
         max_payload_size = 20
@@ -25,12 +25,12 @@ class PartA:
 
         # topology configuration
         different_timeline = Timeline()
-        num_source_hosts = random.randint(3, 7)
+        num_source_hosts = random.randint(1, 6)
         num_dest_hosts = 2
-        port_num_s0 = 8
+        port_num_s0 = 16
 
-        tx_rate = 3
-        propagation = 0.0
+        tx_rate = 10
+        propagation = 1
 
         # switch 2 configuration
 
@@ -42,12 +42,18 @@ class PartA:
         ttl = 10
         mac_table_size = 10
         # Creating switches
-        switch = SwitchLab2(port_num_s0, mac_table_size,q_type, is_fluid, schedule_alg, mac_table_log_file, ttl)
-        #switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
+        switch = SwitchLab2(port_num_s0, mac_table_size, q_type, is_fluid, schedule_alg, mac_table_log_file, ttl)
+        # switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
+
         # Creating hosts
-        source_hosts = SimulationFunctions.create_hosts2(0, num_source_hosts)
-        dest_hosts = SimulationFunctions.create_hosts2(num_source_hosts, num_dest_hosts)
+
+        #creating dest hosts.
+        dest_hosts = SimulationFunctions.create_hosts2(0, num_dest_hosts)
+        source_hosts = SimulationFunctions.create_hosts2(num_dest_hosts, num_source_hosts)
         hosts = source_hosts + dest_hosts
+
+        #adding dest pool
+        SimulationFunctions.dest_pool(source_hosts,dest_hosts)  # updating the dest pool for every source
         # Creating links
         links = []
         switch_links = []
@@ -78,7 +84,7 @@ class PartA:
             host_link_map[link.host1] = link
             host_link_map[link.host2] = link
 
-        for host in hosts:
+        for host in source_hosts:
             SimulationFunctions.generate_times(host.id, different_timeline, number_of_packets, lambda_param)
         #  main loop
         while not should_terminate and different_timeline.events[0].scheduled_time < terminate:

@@ -23,6 +23,12 @@ class SimulationFunctions:
             timeline.add_event(event)
 
     @staticmethod
+    def dest_pool(all_host2, dest_pool):
+        for host2 in all_host2:
+           host2.dst_rnd_set = dest_pool
+        return None
+
+    @staticmethod
     def find_host(all_host, id):
         for host in all_host:
             if host.id == id:
@@ -68,11 +74,11 @@ class SimulationFunctions:
         return hosts
 
     @staticmethod
-    def create_hosts2(starting_index, num_hosts):
+    def create_hosts2(starting_index, num_hosts, dest_hosts=None):
         hosts = []
         for i in range(starting_index + 1, starting_index + num_hosts + 1):
             mac_address = f"00:00:00:00:00:{i:02d}"  # Format the MAC address
-            host2 = Host2(mac_address)
+            host2 = Host2(mac_address,dest_hosts)
             hosts.append(host2)
         return hosts
 
