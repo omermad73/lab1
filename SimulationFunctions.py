@@ -6,14 +6,19 @@ from Host2 import Host2
 from Event import Event
 
 
-class SimulationFunctions:
+class SimulationFunctions():
+
+
+    @staticmethod
+    def random_seed(seed=42):
+        np.random.seed(seed)
+
     @staticmethod
     def generate_times(host_id, timeline, number_of_packets=2000, lambda_param=0.5):
         # generate the times between the L2 Messages
         # number_of_packets - Set the number of packets
         # lambda_param - Set the Input rate parameter for the exponential distributions
         # Generate realizations
-
         inter_arrival_times = np.random.exponential(scale=1 / lambda_param, size=number_of_packets)  # step 1
 
         # Calculate the input timeline
@@ -74,11 +79,11 @@ class SimulationFunctions:
         return hosts
 
     @staticmethod
-    def create_hosts2(starting_index, num_hosts, dest_hosts=None):
+    def create_hosts2(starting_index, num_hosts, dest_hosts=None,seed=42):
         hosts = []
         for i in range(starting_index + 1, starting_index + num_hosts + 1):
             mac_address = f"00:00:00:00:00:{i:02d}"  # Format the MAC address
-            host2 = Host2(mac_address,dest_hosts)
+            host2 = Host2(mac_address,dest_hosts,seed)
             hosts.append(host2)
         return hosts
 

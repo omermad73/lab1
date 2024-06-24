@@ -23,6 +23,12 @@ class PartA:
         mac_table_log_file = open(file_name, 'w')
         mac_table_log_file = None
 
+
+        #  confige the ranodm seed for the entire Toplgy
+        seed = 42
+        random.seed(seed)
+        SimulationFunctions.random_seed(seed)
+
         # topology configuration
         different_timeline = Timeline()
         num_source_hosts = random.randint(1, 6)
@@ -48,8 +54,8 @@ class PartA:
         # Creating hosts
 
         #creating dest hosts.
-        dest_hosts = SimulationFunctions.create_hosts2(0, num_dest_hosts)
-        source_hosts = SimulationFunctions.create_hosts2(num_dest_hosts, num_source_hosts)
+        dest_hosts = SimulationFunctions.create_hosts2(0, num_dest_hosts,None,seed)
+        source_hosts = SimulationFunctions.create_hosts2(num_dest_hosts, num_source_hosts,None,seed)
         hosts = source_hosts + dest_hosts
 
         #adding dest pool

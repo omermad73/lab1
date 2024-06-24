@@ -4,9 +4,11 @@ from L2Message import L2Message
 
 
 class Host2(Host):
-    def __init__(self, mac,dst_rnd_set = None, total_tx_bytes=0, total_rx_bytes=0, nic=-1):
+    def __init__(self, mac,dst_rnd_set = None, seed = 42,total_tx_bytes=0, total_rx_bytes=0, nic=-1):
         super().__init__(mac, total_tx_bytes, total_rx_bytes, nic)
         self.dst_rnd_set = dst_rnd_set
+        if seed is not None:
+            random.seed(seed)
 
     def get_random_host(self):
         # Get a random index for selecting a destination host
