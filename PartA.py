@@ -41,7 +41,8 @@ class PartA:
         # switch 2 configuration
 
         q_type = "input"
-        #q_type = "output"
+        q_type = "output"
+        q_type = "virtual_output"
 
         is_fluid = False
         schedule_alg = 'FIFO'
@@ -50,7 +51,6 @@ class PartA:
         # Creating switches
         switch = SwitchLab2(port_num_s0, mac_table_size, q_type, is_fluid, schedule_alg, mac_table_log_file, ttl)
         # switch1 = Switch(port_num_s1, num_hosts0 + num_hosts1 - 2, mac_table_log_file)
-
         # Creating hosts
 
         #creating dest hosts.
