@@ -101,6 +101,10 @@ class Switch(GNO):
         all_l2messages.append(l2_message)
         timeline.add_event(event)
 
+        time = timeline.events[0].scheduled_time + link.transmit_delay(l2_message)  # calculation of arrival time = time of sending + propagation delay
+        event = Event(time, "transmitted", self.id, dest_id, l2_message.id, link.id)
+        timeline.add_event(event)
+
     def connect_port(self, port, link):
         if port < 0 or port >= self.num_ports:
             raise ValueError("Invalid port number.")

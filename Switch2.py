@@ -25,7 +25,7 @@ class SwitchLab2(Switch):
         for i in range(0,self.num_ports):
             port_is_blocked.append([])
         return port_is_blocked
-    
+
     def configure_queues(self):
         if self.q_type == 'input' or self.q_type == 'output':
             return [queue.Queue() for _ in range(self.num_ports)]
