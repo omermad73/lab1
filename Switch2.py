@@ -3,11 +3,15 @@ import math
 import copy
 from Switch import Switch
 from Event import Event
+import random
 
 
 class SwitchLab2(Switch):
-    def __init__(self, num_ports, mac_table_size, q_type="input", is_fluid=False, schedule_alg='FIFO', log_file=None, ttl=10):
+    def __init__(self, num_ports, mac_table_size, q_type="input", is_fluid=False, schedule_alg='FIFO', log_file=None,seed=42, ttl=10):
         super().__init__(num_ports, mac_table_size, log_file, ttl)
+        if seed is not None:
+            random.seed(seed)
+
         self.q_type = q_type
         self.is_fluid = is_fluid
         self.schedule_alg = schedule_alg
@@ -198,7 +202,8 @@ class SwitchLab2(Switch):
             temp = self.get_real_queue(queue_num)
             if self.q_type == 'input' or self.q_type == 'virtual_output':
                 temp = temp[1]
-            print(f"Switch: {self.id} \033[32mtransmitted\033[0m a message to port {temp} at time: "
+
+            print(f"Switch: {self.id} \033[38;5;90mtransmitted\033[0m a message to port {temp} at time: "
                   f"{timeline.events[0].scheduled_time:.6f}")
 
         if self.q_type == 'input':
@@ -359,6 +364,7 @@ class SwitchLab2(Switch):
         # = time of sending
         self.port_is_blocked[queue_num] = True
         event = Event(time, "transmitted", self.id, None, None, queue_num)
+
         timeline.add_event(event)
         if printing_flag == 1:
             print(f"Switch: {self.id} \033[36msending\033[0m the message (size: {next_message.message_size}) to"
@@ -368,6 +374,7 @@ class SwitchLab2(Switch):
     def first_message_virtual_output(self, timeline, queue_num, all_l2messages, printing_flag):
         current_time = timeline.events[0].scheduled_time
         # receive the message to send
+
         next_message = self.queues[queue_num[0]][queue_num[1]].queue[0]
         if next_message is None:
             return
